@@ -27,13 +27,13 @@ class TodoListItem extends StatelessWidget {
             children: [
               Text(
                 DateFormat('dd/MM/yyyy - HH:mm').format(todo.dateTime),
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                 ),
               ),
               Text(
                 todo.title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -46,7 +46,7 @@ class TodoListItem extends StatelessWidget {
           motion: const ScrollMotion(),
           children: [
             SlidableAction(
-              backgroundColor: Color(0xFFFE4A49),
+              backgroundColor: const Color(0xFFFE4A49),
               foregroundColor: Colors.white,
               icon: Icons.delete,
               label: 'Deletar',

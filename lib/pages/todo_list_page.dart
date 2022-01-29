@@ -14,6 +14,9 @@ class _TodoListPageState extends State<TodoListPage> {
 
   List<Todo> todos = [];
 
+  late Todo deletedTodo;
+  late int deletedTodoPos;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -62,12 +65,14 @@ class _TodoListPageState extends State<TodoListPage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16,),
+                const SizedBox(
+                  height: 16,
+                ),
                 Flexible(
                   child: ListView(
                     shrinkWrap: true,
                     children: [
-                      for(Todo todo in todos)
+                      for (Todo todo in todos)
                         TodoListItem(
                           todo: todo,
                           onDelete: onDelete,
@@ -75,7 +80,9 @@ class _TodoListPageState extends State<TodoListPage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16,),
+                const SizedBox(
+                  height: 16,
+                ),
                 Row(
                   children: [
                     Expanded(
@@ -83,7 +90,9 @@ class _TodoListPageState extends State<TodoListPage> {
                         'Você possui ${todos.length} tarefas pendentes',
                       ),
                     ),
-                    const SizedBox(width: 8,),
+                    const SizedBox(
+                      width: 8,
+                    ),
                     ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
@@ -102,9 +111,29 @@ class _TodoListPageState extends State<TodoListPage> {
     );
   }
 
-  void onDelete(Todo todo){
+  void onDelete(Todo todo) {
+    deletedTodo = todo;
+    deletedTodoPos = todos.indexOf(todo);
     setState(() {
       todos.remove(todo);
     });
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Tarefa ${todo.title} foi removida com sucesso!',
+          style: const TextStyle(
+            color: Color(0xff060708),
+          )),
+      backgroundColor: const Color(0xffd4d4d4),
+      action: SnackBarAction(
+        label: 'Desfazer',
+        textColor: const Color(0xff00d7f3),
+        onPressed: () {
+          setState(() {
+            todos.insert(deletedTodoPos, deletedTodo);
+          });
+        },
+      ),
+      duration: const Duration(seconds: 5),
+    ));
   }
 }
