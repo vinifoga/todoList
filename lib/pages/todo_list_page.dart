@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list/models/todo.dart';
+import 'package:todo_list/repositories/todo_repository.dart';
 import 'package:todo_list/widgets/todo_list_item.dart';
 
 class TodoListPage extends StatefulWidget {
@@ -11,11 +12,24 @@ class TodoListPage extends StatefulWidget {
 
 class _TodoListPageState extends State<TodoListPage> {
   final TextEditingController todoController = TextEditingController();
+  final TodoRepository todoRepository = TodoRepository();
 
   List<Todo> todos = [];
 
   late Todo deletedTodo;
   late int deletedTodoPos;
+  
+  @override
+  void initState() {
+    super.initState();
+    
+    todoRepository.getTodoList().then((value) {
+      setState(() {
+        todos = value;
+      });
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +67,7 @@ class _TodoListPageState extends State<TodoListPage> {
                           todos.add(newTodo);
                         });
                         todoController.clear();
+                        todoRepository.saveTodolist(todos);
                       },
                       style: ElevatedButton.styleFrom(
                         primary: const Color(0xff00D7F3),
@@ -117,6 +132,7 @@ class _TodoListPageState extends State<TodoListPage> {
     setState(() {
       todos.remove(todo);
     });
+    todoRepository.saveTodolist(todos);
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Tarefa ${todo.title} foi removida com sucesso!',
@@ -131,6 +147,7 @@ class _TodoListPageState extends State<TodoListPage> {
           setState(() {
             todos.insert(deletedTodoPos, deletedTodo);
           });
+          todoRepository.saveTodolist(todos);
         },
       ),
       duration: const Duration(seconds: 5),
@@ -172,5 +189,6 @@ class _TodoListPageState extends State<TodoListPage> {
     setState(() {
       todos.clear();
     });
+    todoRepository.saveTodolist(todos);
   }
 }
